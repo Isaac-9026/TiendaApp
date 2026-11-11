@@ -1,0 +1,42 @@
+﻿<EditForm Model="Modelo" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger"/>
+
+    <div class="mb-3">
+        <label class="form-label">Marca:</label>
+        <InputSelect class="form-select" @bind-Value="Modelo.IdMarca">
+            <option value="0">Seleccione</option>
+            @foreach(var m in Marcas)
+            {
+                <option value="@m.Id">@m.Nombre</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <InputText class="form-control" @bind-Value="Modelo.Descripcion" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Precio</label>
+        <InputNumber class="form-control" @bind-Value="Modelo.Precio" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Stock</label>
+        <InputNumber class="form-control" @bind-Value="Modelo.Stock" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Guardar</button>
+    <a href="productos" class="btn btn-secondary">Cancelar</a>
+
+</EditForm>
+
+@code {
+    [Parameter, EditorRequired] public Producto Modelo { get; set; } = default!;
+    [Parameter, EditorRequired] public List<Marca> Marcas { get; set; } = [];
+    [Parameter] public EventCallback onGuardar { get; set; } //Accediendo evento
+
+    private Task Guardar() => onGuardar.InvokeAsync(); //Funciona para CREAR | EDITAR
+}

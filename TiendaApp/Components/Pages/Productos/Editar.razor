@@ -1,0 +1,43 @@
+﻿@page "/productos/editar/{Id:int}"
+@inject IProductoService Servicio
+@inject NavigationManager Nav
+
+<PageTitle>Editar producto</PageTitle>
+
+<h3>Editar producto</h3>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else if (producto is null)
+{
+    <p class="text-danger">El producto no existe</p>
+    <a class="btn btn-secondary" href="productos">Volver</a>
+}else
+{
+    <ProductForm Modelo="producto" Marcas="marcas" OnGuardar="Guardar" />
+}
+
+@code {
+    //Obtener el Id que se pasa como parámetro por la URL
+    [Parameter] public int Id { get; set; }
+
+    private Producto? producto;
+    private List<Marca> marcas = [];
+    private bool cargando = true; //Bandera
+
+    protected override async Task OnInitializedAsync()
+    {
+        marcas = await Servicio.ListarMarcasAsync(); //La UI requiere la lista de marcas
+        producto = await Servicio.ObtenerAsync(Id); //Retorna object Producto | Null
+        cargando = false;
+    }
+
+    private async Task Guardar()
+    {
+        await Servicio.ActualizarAsync(producto);
+        Nav.NavigateTo("productos"); //Index.razor
+
+    }
+}
